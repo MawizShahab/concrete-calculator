@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Concrete Calculator</title>
+    <script>
+      function gObj(obj) {
+        var theObj;
+        if (document.all) {
+          if (typeof obj == "string") {
+            return document.all(obj);
+          } else {
+            return obj.style;
+          }
+        }
+        if (document.getElementById) {
+          if (typeof obj == "string") {
+            return document.getElementById(obj);
+          } else {
+            return obj.style;
+          }
+        }
+        return null;
+      }
+      function trimAll(sString) {
+        while (sString.substring(0, 1) == " ") {
+          sString = sString.substring(1, sString.length);
+        }
+        while (sString.substring(sString.length - 1, sString.length) == " ") {
+          sString = sString.substring(0, sString.length - 1);
+        }
+        return sString;
+      }
+      function isNumber(val) {
+        val = val + "";
+        if (val.length < 1) return false;
+        if (isNaN(val)) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+      function showquickobjmsg(C, B, A) {
+        if (B) {
+          C = "<font color=red>" + C + "</font>";
+        }
+        gObj(A).innerHTML = C;
+      }
+      function calcslab(A) {
+        th = trimAll(gObj("slablength").value + "");
+        SG = trimAll(gObj("slablengthunit").value + "");
+        NP = trimAll(gObj("slabwidth").value + "");
+        gd = trimAll(gObj("slabwidthunit").value + "");
+        IB = trimAll(gObj("slabthick").value + "");
+        gE = trimAll(gObj("slabthickunit").value + "");
+        KR = trimAll(gObj("slabquantity").value + "");
+        if (typeof cc != "undefined") {
+          return;
+        }
+        if (!isNumber(th)) {
+          showquickobjmsg("the length need to be numeric", true, A);
+          return;
+        } else {
+          if (!isNumber(NP)) {
+            showquickobjmsg("the width need to be numeric", true, A);
+            return;
+          } else {
+            if (!isNumber(IB)) {
+              showquickobjmsg(
+                "the thickness or height need to be numeric",
+                true,
+                A
+              );
+              return;
+            } else {
+              if (!isNumber(KR)) {
+                showquickobjmsg("the quantity need to be numeric", true, A);
+                return;
+              }
+            }
+          }
+        }
+        th = parseFloat(th);
+        NP = parseFloat(NP);
+        IB = parseFloat(IB);
+        if (th < 0 || NP < 0 || IB < 0 || KR < 0) {
+          showquickobjmsg("all the number need to be positive", true, A);
+          return;
+        }
+        if (SG == "foot") {
+          th = th * 0.3048;
+        } else {
+          if (SG == "inch") {
+            th = th * 0.0254;
+          } else {
+            if (SG == "yard") {
+              th = th * 0.9144;
+            } else {
+              if (SG == "centimeter") {
+                th = th * 0.01;
+              }
+            }
+          }
+        }
+        if (gd == "foot") {
+          NP = NP * 0.3048;
+        } else {
+          if (gd == "inch") {
+            NP = NP * 0.0254;
+          } else {
+            if (gd == "yard") {
+              NP = NP * 0.9144;
+            } else {
+              if (gd == "centimeter") {
+                NP = NP * 0.01;
+              }
+            }
+          }
+        }
+        if (gE == "foot") {
+          IB = IB * 0.3048;
+        } else {
+          if (gE == "inch") {
+            IB = IB * 0.0254;
+          } else {
+            if (gE == "yard") {
+              IB = IB * 0.9144;
+            } else {
+              if (gE == "centimeter") {
+                IB = IB * 0.01;
+              }
+            }
+          }
+        }
+        ET = th * NP * IB * KR;
+        ko =
+          "<b>Results:</b><br><font color=#d6281f><b>" +
+          ET.toPrecision(3) +
+          "</b></font> cubic meters";
+        ko += "<br><b>Bathurst Ready Mix</b> delivers fresh, on-site mixed concrete in precise quantities.";
+        showquickobjmsg(ko, false, A);
+      }
+    </script>
+    <style>
+      form {
+        background-color: #ededed;
+        padding: 25px;
+      }
+      table {
+        padding: 15px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        border-radius: 5px;
+      }
+      tr.button-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+      }
+      tr.button-container td {
+        padding: 10px 0;
+      }
+      td input[type="button"] {
+        padding: 10px;
+        background-color: #d6281f;
+        border: 0;
+        outline: 0;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+      }
+      td input[type="text"],
+      td select {
+        outline: 0;
+        border: 0;
+        padding: 5px;
+        border-radius: 5px;
+      }
+      tr td {
+        text-transform: capitalize;
+      }
+      div#coutputslab {
+        margin: 15px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="form-container">
+        <form name="calcf">
+          <h2>Slabs, Square Footings, or Walls</h2>
+          <table
+            border="0"
+            cellspacing="0"
+            cellpadding="4"
+            bgcolor="#dddddd"
+            id="standard"
+          >
+            <tr>
+              <td>length</td>
+              <td>
+                <input
+                  type="text"
+                  name="slablength"
+                  style="width: 100px"
+                  id="slablength"
+                  value="2.5"
+                  style="text-align: right"
+                />
+              </td>
+              <td>
+                <select id="slablengthunit" name="slablengthunit">
+                  <option value="meter" selected>meter</option>
+                  <option value="foot">foot</option>
+                  <option value="inch">inch</option>
+                  <option value="yard">yard</option>
+                  <option value="centimeter">centimeter</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>width</td>
+              <td>
+                <input
+                  type="text"
+                  name="slabwidth"
+                  style="width: 100px"
+                  id="slabwidth"
+                  value="5"
+                  style="text-align: right"
+                />
+              </td>
+              <td>
+                <select id="slabwidthunit" name="slabwidthunit">
+                  <option value="meter" selected>meter</option>
+                  <option value="foot">foot</option>
+                  <option value="inch">inch</option>
+                  <option value="yard">yard</option>
+                  <option value="centimeter">centimeter</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>thickness or height</td>
+              <td>
+                <input
+                  type="text"
+                  name="slabthick"
+                  style="width: 100px"
+                  id="slabthick"
+                  value="0.127"
+                  style="text-align: right"
+                />
+              </td>
+              <td>
+                <select id="slabthickunit" name="slabthickunit">
+                  <option value="meter" selected>meter</option>
+                  <option value="foot">foot</option>
+                  <option value="inch">inch</option>
+                  <option value="yard">yard</option>
+                  <option value="centimeter">centimeter</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>quantity</td>
+              <td colspan="2">
+                <input
+                  type="text"
+                  name="slabquantity"
+                  style="width: 100px"
+                  id="slabquantity"
+                  value="1"
+                  style="text-align: right"
+                />
+              </td>
+            </tr>
+            <tr class="button-container">
+              <td colspan="3" align="center">
+                <input
+                  type="button"
+                  value="Calculate"
+                  onclick="javascript:calcslab('coutputslab');"
+                />
+              </td>
+            </tr>
+          </table>
+          <div id="coutputslab"></div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
